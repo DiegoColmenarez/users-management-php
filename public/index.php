@@ -96,7 +96,6 @@ try {
             break;
 
         case 'store':
-            $controller = DependencyInjection::getUserController();
             $form = getCreateUserFormData();
             $form['id'] = generateUuid4();
             $errors = validateCreateUserForm($form);
@@ -108,18 +107,21 @@ try {
                 View::redirect('users.create');
             }
 
+            $controller = DependencyInjection::getUserController();
             $request = new CreateUserWebRequest(
                 $form['id'],
                 $form['name'],
                 $form['email'],
                 $form['password'],
-                $form['role']
+                UserRoleEnum::MEMBER
             );
 
             $controller->store($request);
 
-            Flash::setSuccess('Usuario registrado correctamente.');
-            View::redirect('users.index');
+            Flash::setSuccess(
+                'Usuario registrado como miembro. La cuenta quedará pendiente de activación.'
+            );
+            View::redirect(isLoggedIn() ? 'users.index' : 'auth.login');
             break;
 
         case 'index':
@@ -189,6 +191,7 @@ try {
             View::render('auth/login', array(
                 'pageTitle' => 'Iniciar sesión',
                 'message' => Flash::message(),
+                'success' => Flash::success(),
                 'errors' => Flash::errors(),
                 'old' => Flash::old(),
             ));
@@ -378,7 +381,6 @@ function buildCreateUserViewData(): array
 {
     return array(
         'pageTitle' => 'Registrar usuario',
-        'roleOptions' => UserRoleEnum::values(),
         'message' => Flash::message(),
         'success' => Flash::success(),
         'errors' => Flash::errors(),
@@ -422,7 +424,6 @@ function getCreateUserFormData(): array
         'name' => isset($_POST['name']) ? trim((string) $_POST['name']) : '',
         'email' => isset($_POST['email']) ? trim((string) $_POST['email']) : '',
         'password' => isset($_POST['password']) ? trim((string) $_POST['password']) : '',
-        'role' => isset($_POST['role']) ? trim((string) $_POST['role']) : '',
     );
 }
 
@@ -464,10 +465,6 @@ function validateCreateUserForm(array $form): array
         $errors['password'] = 'La contraseña es obligatoria.';
     } elseif (strlen($form['password']) < 8) {
         $errors['password'] = 'La contraseña debe tener al menos 8 caracteres.';
-    }
-
-    if ($form['role'] === '') {
-        $errors['role'] = 'El rol es obligatorio.';
     }
 
     return $errors;
