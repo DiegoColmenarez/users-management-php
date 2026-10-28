@@ -107,6 +107,7 @@ final readonly class ComputerModel
         return $this->memory;
     }
 
+    
     public function storage(): ComputerStorage
     {
         return $this->storage;
@@ -170,29 +171,6 @@ final readonly class ComputerModel
     public function equals(ComputerModel $other): bool
     {
         return $this->id->equals($other->id());
-    }
-
-    /**
-     * @return array<string, string|int|float>
-     */
-    public function toArray(): array
-    {
-        return array(
-            'id' => $this->id->value(),
-            'brand' => $this->brand->value(),
-            'category' => $this->category,
-            'cpu_brand' => $this->processor->cpuBrand(),
-            'cpu_speed' => $this->processor->cpuSpeed(),
-            'ram_technology' => $this->memory->ramTechnology(),
-            'ram_capacity' => $this->memory->ramCapacity(),
-            'storage_technology' => $this->storage->storageTechnology(),
-            'storage_capacity' => $this->storage->storageCapacity(),
-            'usb_ports' => $this->connectivity->usbPorts(),
-            'hdmi_ports' => $this->connectivity->hdmiPorts(),
-            'monitor_brand' => $this->display->monitorBrand(),
-            'screen_size_inches' => $this->display->screenSizeInches(),
-            'price' => $this->price->value(),
-        );
     }
 
     private function withChanges(
