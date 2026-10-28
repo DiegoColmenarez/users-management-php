@@ -2,6 +2,7 @@
 <?php require __DIR__ . '/../layouts/menu.php'; ?>
 
 <h1>Registrar usuario</h1>
+<p>Las cuentas nuevas se registran como miembros y quedan pendientes de activación.</p>
 
 <?php if (!empty($message)): ?>
     <div class="alert-error">
@@ -47,22 +48,6 @@
         <?php if (!empty($errors['password'])): ?>
             <div class="field-error">
                 <?= htmlspecialchars($errors['password'], ENT_QUOTES, 'UTF-8') ?>
-            </div>
-        <?php endif; ?>
-    </div>
-
-    <div class="form-group">
-        <label for="role">Rol</label><br>
-        <select id="role" name="role">
-            <?php foreach ($roleOptions as $opt): ?>
-                <option value="<?= htmlspecialchars($opt, ENT_QUOTES, 'UTF-8') ?>" <?= (($old['role'] ?? '') === $opt) ? 'selected' : '' ?>>
-                    <?= htmlspecialchars($opt, ENT_QUOTES, 'UTF-8') ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
-        <?php if (!empty($errors['role'])): ?>
-            <div class="field-error">
-                <?= htmlspecialchars($errors['role'], ENT_QUOTES, 'UTF-8') ?>
             </div>
         <?php endif; ?>
     </div>
