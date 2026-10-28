@@ -2,7 +2,6 @@
 <?php require __DIR__ . '/../layouts/menu.php'; ?>
 
 <h1>Registrar usuario</h1>
-<p>Las cuentas nuevas se registran como miembros y quedan pendientes de activación.</p>
 
 <?php if (!empty($message)): ?>
     <div class="alert-error">
