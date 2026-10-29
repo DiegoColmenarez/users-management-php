@@ -8,8 +8,5 @@ use Domain\Models\ComputerModel;
 
 interface GetAllComputersPort
 {
-    /**
-     * @return ComputerModel[]
-     */
     public function getAll(): array;
 }
