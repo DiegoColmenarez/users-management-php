@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Domain\ValueObjects;
 
 use Domain\Exceptions\InvalidComputerPriceException;
-use RuntimeException;
 
 final readonly class ComputerPrice
 {
@@ -13,8 +12,6 @@ final readonly class ComputerPrice
 
     public function __construct(string $value)
     {
-        self::ensureBcMathIsAvailable();
-
         $normalizedValue = trim($value);
 
         if ($normalizedValue === '') {
@@ -25,13 +22,12 @@ final readonly class ComputerPrice
             throw InvalidComputerPriceException::becauseValueIsInvalid($value);
         }
 
-        $normalizedValue = bcadd($normalizedValue, '0', 2);
+        [$integerPart, $fractionalPart] = array_pad(explode('.', $normalizedValue, 2), 2, '');
+        $integerPart = ltrim($integerPart, '0');
+        $integerPart = $integerPart === '' ? '0' : $integerPart;
+        $fractionalPart = str_pad($fractionalPart, 2, '0');
 
-        if (bccomp($normalizedValue, '9999999999.99', 2) > 0) {
-            throw InvalidComputerPriceException::becauseValueIsOutOfRange($value);
-        }
-
-        $this->value = $normalizedValue;
+        $this->value = $integerPart . '.' . $fractionalPart;
     }
 
     public function value(): string
@@ -41,15 +37,6 @@ final readonly class ComputerPrice
 
     public function equals(ComputerPrice $other): bool
     {
-        self::ensureBcMathIsAvailable();
-
-        return bccomp($this->value, $other->value(), 2) === 0;
-    }
-
-    private static function ensureBcMathIsAvailable(): void
-    {
-        if (!extension_loaded('bcmath')) {
-            throw new RuntimeException('The BCMath extension is required to use ComputerPrice.');
-        }
+        return $this->value === $other->value();
     }
 }
