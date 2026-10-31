@@ -184,6 +184,73 @@ try {
             View::redirect('users.index');
             break;
 
+        case 'computer.home':
+            View::render('computers/home', array(
+                'pageTitle' => 'Gestión de computadores',
+                'message' => Flash::message(),
+                'success' => Flash::success(),
+            ));
+            break;
+
+        case 'computer.create':
+            View::render('computers/create', array(
+                'pageTitle' => 'Registrar computador',
+                'message' => Flash::message(),
+                'success' => Flash::success(),
+                'errors' => Flash::errors(),
+                'old' => Flash::old(),
+            ));
+            break;
+
+        case 'computer.store':
+            DependencyInjection::getComputerController()->store();
+            Flash::setSuccess('Computador registrado correctamente.');
+            View::redirect('computers.index');
+            break;
+
+        case 'computer.index':
+            $computers = DependencyInjection::getComputerController()->index();
+            View::render('computers/list', array(
+                'pageTitle' => 'Computadores registrados',
+                'computers' => $computers,
+                'message' => Flash::message(),
+                'success' => Flash::success(),
+            ));
+            break;
+
+        case 'computer.show':
+            $id = trim((string) ($_GET['id'] ?? ''));
+            $computer = DependencyInjection::getComputerController()->show($id);
+            View::render('computers/show', array(
+                'pageTitle' => 'Detalle del computador',
+                'computer' => $computer,
+                'message' => Flash::message(),
+            ));
+            break;
+
+        case 'computer.edit':
+            $id = trim((string) ($_GET['id'] ?? ''));
+            $computer = DependencyInjection::getComputerController()->show($id);
+            View::render('computers/edit', array(
+                'pageTitle' => 'Editar computador',
+                'computer' => $computer,
+                'message' => Flash::message(),
+            ));
+            break;
+
+        case 'computer.update':
+            DependencyInjection::getComputerController()->update();
+            Flash::setSuccess('Computador actualizado correctamente.');
+            View::redirect('computers.index');
+            break;
+
+        case 'computer.delete':
+            $id = trim((string) ($_POST['id'] ?? ''));
+            DependencyInjection::getComputerController()->delete($id);
+            Flash::setSuccess('Computador eliminado correctamente.');
+            View::redirect('computers.index');
+            break;
+
         case 'login':
             if (isLoggedIn()) {
                 View::redirect('home');
@@ -284,6 +351,23 @@ try {
             throw new RuntimeException('Acción no soportada.');
     }
 } catch (Throwable $exception) {
+    if (str_starts_with($route, 'computers.')) {
+        if ($exception instanceof ComputerNotFoundException) {
+            renderComputerError(
+                404,
+                'Computador no encontrado',
+                'No se encontró el computador solicitado.'
+            );
+        }
+
+        error_log(sprintf('Error en la ruta %s: %s', $route, $exception));
+        renderComputerError(
+            500,
+            'Error interno',
+            'No fue posible completar la operación. Inténtalo de nuevo más tarde.'
+        );
+    }
+
     $msg = $exception->getMessage();
     Flash::setMessage($msg);
 
@@ -323,6 +407,23 @@ try {
             View::render('home', buildHomeViewData($msg));
             break;
     }
+}
+
+function renderComputerError(int $status, string $title, string $message): never
+{
+    http_response_code($status);
+    header('Content-Type: text/html; charset=UTF-8');
+
+    $safeTitle = htmlspecialchars($title, ENT_QUOTES, 'UTF-8');
+    $safeMessage = htmlspecialchars($message, ENT_QUOTES, 'UTF-8');
+
+    echo '<!doctype html><html lang="es"><head><meta charset="UTF-8">';
+    echo '<meta name="viewport" content="width=device-width, initial-scale=1">';
+    echo '<title>' . $safeTitle . '</title></head><body>';
+    echo '<main><h1>' . $safeTitle . '</h1><p>' . $safeMessage . '</p>';
+    echo '<a href="?route=computers.index">Volver a computadores</a></main>';
+    echo '</body></html>';
+    exit;
 }
 
 
