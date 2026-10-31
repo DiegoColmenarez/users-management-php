@@ -29,6 +29,13 @@
 <?php endif; ?>
 
 <?php if (isset($_SESSION['auth'])): ?>
+    <h2>Computadores</h2>
+    <ul>
+        <li><a href="?route=computers.create">Registrar computador</a></li>
+        <li><a href="?route=computers.index">Listar y administrar computadores</a></li>
+    </ul>
+
+    <h2>Usuarios</h2>
     <ul>
         <li><strong>C:</strong> Registrar usuario</li>
         <li><strong>R:</strong> Consultar usuario</li>
