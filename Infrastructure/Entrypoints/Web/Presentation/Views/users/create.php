@@ -51,22 +51,6 @@
         <?php endif; ?>
     </div>
 
-    <div class="form-group">
-        <label for="role">Rol</label><br>
-        <select id="role" name="role">
-            <?php foreach ($roleOptions as $opt): ?>
-                <option value="<?= htmlspecialchars($opt, ENT_QUOTES, 'UTF-8') ?>" <?= (($old['role'] ?? '') === $opt) ? 'selected' : '' ?>>
-                    <?= htmlspecialchars($opt, ENT_QUOTES, 'UTF-8') ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
-        <?php if (!empty($errors['role'])): ?>
-            <div class="field-error">
-                <?= htmlspecialchars($errors['role'], ENT_QUOTES, 'UTF-8') ?>
-            </div>
-        <?php endif; ?>
-    </div>
-
     <button type="submit" class="btn btn-primary">Registrar usuario</button>
 </form>
 

@@ -42,6 +42,38 @@ final class WebRoutes
                 'method' => 'POST',
                 'action' => 'delete',
             ),
+            'computers.home' => array(
+                'method' => 'GET',
+                'action' => 'computer.home',
+            ),
+            'computers.create' => array(
+                'method' => 'GET',
+                'action' => 'computer.create',
+            ),
+            'computers.store' => array(
+                'method' => 'POST',
+                'action' => 'computer.store',
+            ),
+            'computers.index' => array(
+                'method' => 'GET',
+                'action' => 'computer.index',
+            ),
+            'computers.show' => array(
+                'method' => 'GET',
+                'action' => 'computer.show',
+            ),
+            'computers.edit' => array(
+                'method' => 'GET',
+                'action' => 'computer.edit',
+            ),
+            'computers.update' => array(
+                'method' => 'POST',
+                'action' => 'computer.update',
+            ),
+            'computers.delete' => array(
+                'method' => 'POST',
+                'action' => 'computer.delete',
+            ),
             'auth.login' => array(
                 'method' => 'GET',
                 'action' => 'login',

@@ -79,3 +79,5 @@ yarn-error.log*
 docs/
 .vscode/settings.json
 *.ps1
+ 
+AUDITORIA_COMPUTADOR.md

@@ -148,6 +148,62 @@ final class DependencyInjection
         );
     }
 
+    public static function getComputerRepository(): ComputerRepositoryMySQL
+    {
+        self::validateComputerDatabaseConfiguration();
+        ClassLoader::loadClass('ComputerRepositoryMySQL');
+        ClassLoader::loadClass('ComputerPersistenceMapper');
+
+        $pdo = self::getPdo();
+        $pdo->query(
+            'SELECT id, brand, category, cpu_brand, cpu_speed, ram_technology, ' .
+            'ram_capacity, storage_technology, storage_capacity, usb_ports, ' .
+            'hdmi_ports, monitor_brand, screen_size_inches, price ' .
+            'FROM computers LIMIT 0'
+        );
+
+        return new ComputerRepositoryMySQL($pdo, new ComputerPersistenceMapper());
+    }
+
+    public static function getComputerController(): ComputerController
+    {
+        ClassLoader::loadClass('ComputerController');
+        ClassLoader::loadClass('CreateComputerService');
+        ClassLoader::loadClass('UpdateComputerService');
+        ClassLoader::loadClass('GetComputerByIdService');
+        ClassLoader::loadClass('GetAllComputersService');
+        ClassLoader::loadClass('DeleteComputerService');
+
+        $repository = self::getComputerRepository();
+
+        return new ComputerController(
+            new CreateComputerService($repository),
+            new UpdateComputerService($repository, $repository),
+            new GetComputerByIdService($repository),
+            new GetAllComputersService($repository),
+            new DeleteComputerService($repository, $repository),
+            new ComputerWebMapper()
+        );
+    }
+
+    private static function validateComputerDatabaseConfiguration(): void
+    {
+        foreach (array('DB_HOST', 'DB_DATABASE', 'DB_USERNAME', 'DB_CHARSET') as $key) {
+            if (EnvLoader::get($key) === '') {
+                throw new RuntimeException('La configuración de base de datos requiere ' . $key . '.');
+            }
+        }
+
+        $port = EnvLoader::get('DB_PORT');
+        if (filter_var($port, FILTER_VALIDATE_INT) === false || (int) $port < 1) {
+            throw new RuntimeException('DB_PORT debe ser un puerto válido.');
+        }
+
+        if (!array_key_exists('DB_PASSWORD', $_ENV) && getenv('DB_PASSWORD') === false) {
+            throw new RuntimeException('La configuración de base de datos requiere DB_PASSWORD.');
+        }
+    }
+
     public static function getLoginUseCase(): LoginUseCase
     {
         ClassLoader::loadClass('LoginService');
