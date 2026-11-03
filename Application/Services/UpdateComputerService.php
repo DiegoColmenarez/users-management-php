@@ -46,17 +46,15 @@ final class UpdateComputerService implements UpdateComputerUseCase
             throw ComputerNotFoundException::becauseIdWasNotFound($computerId->value());
         }
 
-        $computer = new ComputerModel(
-            $computerId,
-            new ComputerBrand($command->getBrand()),
-            $command->getCategory(),
-            new ComputerProcessor($command->getCpuBrand(), $command->getCpuSpeed()),
-            new ComputerMemory($command->getRamTechnology(), $command->getRamCapacity()),
-            new ComputerStorage($command->getStorageTechnology(), $command->getStorageCapacity()),
-            new ComputerConnectivity($command->getUsbPorts(), $command->getHdmiPorts()),
-            new ComputerDisplay($command->getMonitorBrand(), $command->getScreenSizeInches()),
-            new ComputerPrice($command->getPrice())
-        );
+        $computer = $currentComputer
+            ->changeBrand(new ComputerBrand($command->getBrand()))
+            ->changeCategory($command->getCategory())
+            ->changeProcessor(new ComputerProcessor($command->getCpuBrand(), $command->getCpuSpeed()))
+            ->changeMemory(new ComputerMemory($command->getRamTechnology(), $command->getRamCapacity()))
+            ->changeStorage(new ComputerStorage($command->getStorageTechnology(), $command->getStorageCapacity()))
+            ->changeConnectivity(new ComputerConnectivity($command->getUsbPorts(), $command->getHdmiPorts()))
+            ->changeDisplay(new ComputerDisplay($command->getMonitorBrand(), $command->getScreenSizeInches()))
+            ->changePrice(new ComputerPrice($command->getPrice()));
 
         return $this->updateComputerPort->update($computer);
     }
