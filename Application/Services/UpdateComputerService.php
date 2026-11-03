@@ -46,6 +46,7 @@ final class UpdateComputerService implements UpdateComputerUseCase
             throw ComputerNotFoundException::becauseIdWasNotFound($computerId->value());
         }
 
+        
         $computer = $currentComputer
             ->changeBrand(new ComputerBrand($command->getBrand()))
             ->changeCategory($command->getCategory())
